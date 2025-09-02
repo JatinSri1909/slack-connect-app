@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Slack OAuth Callback</title>
     <style>
         body {
@@ -52,7 +53,7 @@
                     window.opener.postMessage({
                         type: 'SLACK_OAUTH_ERROR',
                         error: 'Authorization failed: ' + error
-                    }, window.location.origin);
+                    }, '*'); // Use '*' for cross-origin compatibility
                 }
                 
                 setTimeout(() => window.close(), 3000);
@@ -67,44 +68,54 @@
                     window.opener.postMessage({
                         type: 'SLACK_OAUTH_ERROR',
                         error: 'No authorization code received'
-                    }, window.location.origin);
+                    }, '*'); // Use '*' for cross-origin compatibility
                 }
                 
                 setTimeout(() => window.close(), 3000);
                 return;
             }
 
-            // Exchange code for token
-            fetch('/api/auth/slack/callback?code=' + encodeURIComponent(code))
-                .then(response => response.json())
+            // Exchange code for token via API call
+            const apiUrl = window.location.origin + '/api/auth/slack/callback?code=' + encodeURIComponent(code);
+            
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
                         statusElement.textContent = 'Successfully connected to ' + data.team.name + '!';
                         statusElement.className = 'success';
+                        
+                        // Store in localStorage as backup
+                        localStorage.setItem('connected_slack_team', JSON.stringify(data.team));
                         
                         // Send success to parent window
                         if (window.opener) {
                             window.opener.postMessage({
                                 type: 'SLACK_OAUTH_SUCCESS',
                                 team: data.team
-                            }, window.location.origin);
+                            }, '*'); // Use '*' for cross-origin compatibility
                         }
                         
-                        setTimeout(() => window.close(), 2000);
+                        setTimeout(() => window.close(), 1500);
                     } else {
                         throw new Error(data.error || 'Unknown error');
                     }
                 })
                 .catch(error => {
                     console.error('OAuth error:', error);
-                    statusElement.textContent = 'Failed to complete authorization: ' + error.message;
+                    statusElement.textContent = 'Failed to complete authorization. Please try again.';
                     statusElement.className = 'error';
                     
                     if (window.opener) {
                         window.opener.postMessage({
                             type: 'SLACK_OAUTH_ERROR',
-                            error: error.message
-                        }, window.location.origin);
+                            error: 'Failed to complete authorization: ' + error.message
+                        }, '*'); // Use '*' for cross-origin compatibility
                     }
                     
                     setTimeout(() => window.close(), 3000);

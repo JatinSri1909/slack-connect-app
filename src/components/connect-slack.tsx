@@ -27,29 +27,34 @@ const ConnectSlack: React.FC<ConnectSlackProps> = ({ onConnect }) => {
       const checkClosed = setInterval(() => {
         if (popup?.closed) {
           clearInterval(checkClosed);
+          window.removeEventListener('message', messageListener);
           setLoading(false);
           
-          // Check if we have team info in localStorage (set by callback handler)
-          const teamData = localStorage.getItem('slack_team');
+          // Check if we have team info in localStorage (fallback mechanism)
+          const teamData = localStorage.getItem('connected_slack_team');
           if (teamData) {
-            const team = JSON.parse(teamData);
-            localStorage.removeItem('slack_team');
-            onConnect(team);
+            try {
+              const team = JSON.parse(teamData);
+              onConnect(team);
+            } catch (error) {
+              console.error('Error parsing team data:', error);
+            }
           }
         }
       }, 1000);
 
       // Listen for messages from popup (OAuth success)
       const messageListener = (event: MessageEvent) => {
-        if (event.origin !== window.location.origin) return;
-        
+        // Allow messages from any origin for OAuth callback
         if (event.data.type === 'SLACK_OAUTH_SUCCESS') {
           popup?.close();
+          clearInterval(checkClosed);
           window.removeEventListener('message', messageListener);
           setLoading(false);
           onConnect(event.data.team);
         } else if (event.data.type === 'SLACK_OAUTH_ERROR') {
           popup?.close();
+          clearInterval(checkClosed);
           window.removeEventListener('message', messageListener);
           setLoading(false);
           setError(event.data.error);
