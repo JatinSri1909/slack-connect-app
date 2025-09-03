@@ -1,6 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import { Button } from './ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Label } from './ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Textarea } from './ui/textarea';
 import apiService, { type SlackChannel } from '../services/api';
 
 interface MessageComposerProps {
@@ -8,7 +13,7 @@ interface MessageComposerProps {
   onMessageSent: () => void;
 }
 
-const MessageComposer: React.FC<MessageComposerProps> = ({ teamId, onMessageSent }) => {
+const MessageComposer = ({ teamId, onMessageSent }: MessageComposerProps) => {
   const [channels, setChannels] = useState<SlackChannel[]>([]);
   const [selectedChannel, setSelectedChannel] = useState<string>('');
   const [message, setMessage] = useState('');
@@ -19,18 +24,20 @@ const MessageComposer: React.FC<MessageComposerProps> = ({ teamId, onMessageSent
   const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
-    loadChannels();
-  }, [teamId]);
+    const loadChannels = async () => {
+      try {
+        const { channels } = await apiService.getChannels(teamId);
+        setChannels(channels);
+      } catch (error) {
+        setError('Failed to load channels');
+        console.error('Error loading channels:', error);
+      }
+    };
 
-  const loadChannels = async () => {
-    try {
-      const { channels } = await apiService.getChannels(teamId);
-      setChannels(channels);
-    } catch (error) {
-      setError('Failed to load channels');
-      console.error('Error loading channels:', error);
+    if (teamId) {
+      loadChannels();
     }
-  };
+  }, [teamId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,23 +47,16 @@ const MessageComposer: React.FC<MessageComposerProps> = ({ teamId, onMessageSent
       return;
     }
 
-    if (isScheduled && scheduledDate <= new Date()) {
-      setError('Scheduled time must be in the future');
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-
     try {
-      const selectedChannelObj = channels.find(c => c.id === selectedChannel);
-      
+      setLoading(true);
+      setError(null);
+      setSuccess(null);
+
       if (isScheduled) {
         await apiService.scheduleMessage({
           teamId,
           channelId: selectedChannel,
-          channelName: selectedChannelObj?.name || '',
+          channelName: channels.find(c => c.id === selectedChannel)?.name || '',
           message,
           scheduledTime: scheduledDate.toISOString()
         });
@@ -76,91 +76,115 @@ const MessageComposer: React.FC<MessageComposerProps> = ({ teamId, onMessageSent
       setIsScheduled(false);
       setScheduledDate(new Date());
       onMessageSent();
-      
+
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccess(null), 3000);
     } catch (error) {
-      setError('Failed to send message');
-      console.error('Send error:', error);
+      console.error('Error sending message:', error);
+      setError(error instanceof Error ? error.message : 'Failed to send message');
     } finally {
       setLoading(false);
     }
   };
 
-  const getMinDateTime = () => {
-    const now = new Date();
-    now.setMinutes(now.getMinutes() + 1); // At least 1 minute in the future
-    return now;
-  };
-
   return (
-    <div className="message-composer">
-      <h3>Compose Message</h3>
-      
-      <form onSubmit={handleSubmit} className="composer-form">
-        <div className="form-group">
-          <label htmlFor="channel">Channel:</label>
-          <select
-            id="channel"
-            value={selectedChannel}
-            onChange={(e) => setSelectedChannel(e.target.value)}
-            required
-          >
-            <option value="">Select a channel</option>
-            {channels.map(channel => (
-              <option key={channel.id} value={channel.id}>
-                #{channel.name} {channel.is_private ? '(private)' : ''}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="message">Message:</label>
-          <textarea
-            id="message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Enter your message here..."
-            rows={4}
-            required
-          />
-        </div>
-
-        <div className="form-group checkbox-group">
-          <label className="checkbox-label">
-            <input
-              type="checkbox"
-              checked={isScheduled}
-              onChange={(e) => setIsScheduled(e.target.checked)}
-            />
-            Schedule for later
-          </label>
-        </div>
-
-        {isScheduled && (
-          <div className="form-group">
-            <label>Schedule Date & Time:</label>
-            <DatePicker
-              selected={scheduledDate}
-              onChange={(date: Date | null) => date && setScheduledDate(date)}
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              timeCaption="Time"
-              dateFormat="MMMM d, yyyy h:mm aa"
-              minDate={getMinDateTime()}
-              className="date-picker"
-            />
+    <Card className="border-primary/20 shadow-lg shadow-primary/5">
+      <CardHeader>
+        <CardTitle className="text-primary flex items-center space-x-2">
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+          <span>Compose Message</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {error && (
+          <div className="mb-4 p-3 text-sm bg-destructive/10 border border-destructive/20 text-destructive rounded">
+            {error}
           </div>
         )}
 
-        {error && <div className="error-message">{error}</div>}
-        {success && <div className="success-message">{success}</div>}
+        {success && (
+          <div className="mb-4 p-3 text-sm bg-green-50 border border-green-200 text-green-800 rounded">
+            {success}
+          </div>
+        )}
 
-        <button type="submit" disabled={loading} className="submit-button">
-          {loading ? 'Sending...' : (isScheduled ? 'Schedule Message' : 'Send Now')}
-        </button>
-      </form>
-    </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Channel Selection */}
+          <div className="space-y-2">
+            <Label htmlFor="channel-select" className="text-primary font-medium">Channel</Label>
+            <Select value={selectedChannel} onValueChange={setSelectedChannel}>
+              <SelectTrigger className="border-primary/30 focus:border-primary focus:ring-primary/20">
+                <SelectValue placeholder="Select a channel" />
+              </SelectTrigger>
+              <SelectContent>
+                {channels.map((channel) => (
+                  <SelectItem key={channel.id} value={channel.id}>
+                    <span className="text-primary">#</span>{channel.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Message Content */}
+          <div className="space-y-2">
+            <Label htmlFor="message" className="text-primary font-medium">Message</Label>
+            <Textarea
+              id="message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Type your message here..."
+              rows={4}
+              className="resize-none border-primary/30 focus:border-primary focus:ring-primary/20"
+            />
+          </div>
+
+          {/* Scheduling Options */}
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="schedule-toggle"
+              checked={isScheduled}
+              onChange={(e) => setIsScheduled(e.target.checked)}
+              className="rounded border-primary/30 text-primary focus:ring-primary"
+              aria-label="Schedule message for later"
+            />
+            <Label htmlFor="schedule-toggle" className="text-sm text-primary">
+              Schedule for later
+            </Label>
+          </div>
+
+          {isScheduled && (
+            <div className="space-y-2 p-4 border border-primary/20 rounded-lg bg-primary/5">
+              <Label className="text-primary font-medium">Schedule Date & Time</Label>
+              <DatePicker
+                selected={scheduledDate}
+                onChange={(date: Date | null) => date && setScheduledDate(date)}
+                showTimeSelect
+                minDate={new Date()}
+                dateFormat="MMMM d, yyyy h:mm aa"
+                className="w-full px-3 py-2 border border-primary/30 rounded-md text-sm focus:border-primary focus:ring-primary/20"
+                placeholderText="Select date and time"
+              />
+            </div>
+          )}
+
+          {/* Submit Button */}
+          <Button
+            type="submit"
+            disabled={loading || !selectedChannel || !message.trim()}
+            className="w-full shadow-lg shadow-primary/25"
+          >
+            {loading 
+              ? (isScheduled ? 'Scheduling...' : 'Sending...') 
+              : (isScheduled ? 'Schedule Message' : 'Send Message')
+            }
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
 
