@@ -32,7 +32,7 @@
         }
     </style>
 </head>
-<body>
+<body data-backend-url="">
     <div class="callback-container">
         <div id="status" class="loading">
             <h3>Connecting to Slack...</h3>
@@ -64,7 +64,10 @@
             }
         } else if (code) {
             // Send the authorization code to your backend
-            fetch(`${window.location.origin}/api/auth/slack/callback?code=${code}`)
+            // Get backend URL from data attribute or use default
+            const backendUrl = document.body.dataset.backendUrl || 
+                (window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://slack-connect-server-1.onrender.com');
+            fetch(`${backendUrl}/api/auth/slack/callback?code=${code}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
