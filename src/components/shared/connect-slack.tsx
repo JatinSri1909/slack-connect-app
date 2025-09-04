@@ -1,11 +1,17 @@
 import { useState } from 'react';
 import { Button } from '../ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../ui/card';
 import apiService from '@/services/api';
 import type { IConnectSlackProps } from '@/types';
 
 const ConnectSlack = (props: IConnectSlackProps) => {
-  const { onConnect} = props;
+  const { onConnect } = props;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -13,13 +19,13 @@ const ConnectSlack = (props: IConnectSlackProps) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const { authUrl } = await apiService.getSlackAuthUrl();
-      
+
       const popup = window.open(
         authUrl,
         'slack-oauth',
-        'width=600,height=700,scrollbars=yes,resizable=yes'
+        'width=600,height=700,scrollbars=yes,resizable=yes',
       );
 
       const checkClosed = setInterval(() => {
@@ -27,7 +33,7 @@ const ConnectSlack = (props: IConnectSlackProps) => {
           clearInterval(checkClosed);
           window.removeEventListener('message', messageListener);
           setLoading(false);
-          
+
           const teamData = localStorage.getItem('connected_slack_team');
           if (teamData) {
             try {
@@ -57,7 +63,6 @@ const ConnectSlack = (props: IConnectSlackProps) => {
       };
 
       window.addEventListener('message', messageListener);
-      
     } catch (error) {
       console.error('Auth error:', error);
       setError('Failed to initialize authentication');
@@ -70,13 +75,18 @@ const ConnectSlack = (props: IConnectSlackProps) => {
       <Card className="w-full max-w-md border-primary/20 shadow-lg shadow-primary/5">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 w-12 h-12 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/25">
-            <svg className="w-5 h-5 text-primary-foreground" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
+            <svg
+              className="w-5 h-5 text-primary-foreground"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
           </div>
           <CardTitle className="text-primary">Connect to Slack</CardTitle>
           <CardDescription>
-            Connect your Slack workspace to start sending and scheduling messages
+            Connect your Slack workspace to start sending and scheduling
+            messages
           </CardDescription>
         </CardHeader>
 

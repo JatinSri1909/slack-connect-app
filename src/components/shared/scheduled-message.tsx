@@ -5,7 +5,7 @@ import { Badge } from '../ui/badge';
 import apiService from '@/services/api';
 import type { IScheduledMessage, IScheduledMessagesProps } from '@/types';
 
-const ScheduledMessages = (props : IScheduledMessagesProps) => {
+const ScheduledMessages = (props: IScheduledMessagesProps) => {
   const { teamId, refreshTrigger } = props;
   const [messages, setMessages] = useState<IScheduledMessage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,9 +36,9 @@ const ScheduledMessages = (props : IScheduledMessagesProps) => {
     try {
       setCancellingId(messageId);
       await apiService.cancelScheduledMessage(messageId, teamId);
-      
+
       // Remove the cancelled message from the list
-      setMessages(prev => prev.filter(msg => msg.id !== messageId));
+      setMessages((prev) => prev.filter((msg) => msg.id !== messageId));
     } catch (error) {
       console.error('Error cancelling message:', error);
       setError('Failed to cancel message');
@@ -68,7 +68,9 @@ const ScheduledMessages = (props : IScheduledMessagesProps) => {
     return (
       <Card>
         <CardContent className="p-6">
-          <div className="text-center text-muted-foreground">Loading scheduled messages...</div>
+          <div className="text-center text-muted-foreground">
+            Loading scheduled messages...
+          </div>
         </CardContent>
       </Card>
     );
@@ -78,8 +80,18 @@ const ScheduledMessages = (props : IScheduledMessagesProps) => {
     <Card className="border-primary/20 shadow-lg shadow-primary/5">
       <CardHeader>
         <CardTitle className="text-primary flex items-center space-x-2">
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
           <span>Scheduled Messages</span>
         </CardTitle>
@@ -98,15 +110,19 @@ const ScheduledMessages = (props : IScheduledMessagesProps) => {
         ) : (
           <div className="space-y-4">
             {messages.map((message) => (
-              <div key={message.id} className="p-4 border border-primary/20 bg-primary/5 rounded-lg">
+              <div
+                key={message.id}
+                className="p-4 border border-primary/20 bg-primary/5 rounded-lg"
+              >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-2">
-                      <Badge 
+                      <Badge
                         variant={getStatusVariant(message.status)}
-                        className={message.status === 'pending' 
-                          ? 'bg-primary text-primary-foreground' 
-                          : 'bg-secondary text-secondary-foreground'
+                        className={
+                          message.status === 'pending'
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-secondary text-secondary-foreground'
                         }
                       >
                         {message.status}
@@ -115,11 +131,16 @@ const ScheduledMessages = (props : IScheduledMessagesProps) => {
                         #{message.channel_name}
                       </span>
                     </div>
-                    
-                    <p className="text-sm mb-2 text-primary">{message.message}</p>
-                    
+
+                    <p className="text-sm mb-2 text-primary">
+                      {message.message}
+                    </p>
+
                     <div className="text-xs text-muted-foreground">
-                      Scheduled for: <span className="text-primary">{formatDateTime(message.scheduled_time.toString())}</span>
+                      Scheduled for:{' '}
+                      <span className="text-primary">
+                        {formatDateTime(message.scheduled_time.toString())}
+                      </span>
                     </div>
                   </div>
 
