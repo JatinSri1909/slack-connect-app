@@ -138,7 +138,7 @@ export const MessageComposer = (props: IMessageComposerProps) => {
                  Channel
                </Label>
                <div className="text-xs text-muted-foreground bg-blue-50 border border-blue-200 rounded-md p-2">
-                 <span className="font-medium text-blue-800">Note:</span> Private channels require manual invitation. 
+                 <span className="font-medium text-blue-800">Note:</span> Channels require manual invitation. 
                  Write <code className="bg-blue-100 px-1 rounded text-blue-900">@Slack-Connect Hi</code> to invite the bot to your private channel.
                </div>
              </div>
