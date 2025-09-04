@@ -88,7 +88,7 @@ const ConnectSlack = (props: IConnectSlackProps) => {
 
         <CardContent>
           {error && (
-            <div className="mb-4 p-3 text-sm bg-destructive/10 border border-destructive/20 text-destructive rounded">
+            <div className="error-message">
               {error}
             </div>
           )}

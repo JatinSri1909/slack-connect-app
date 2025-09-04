@@ -47,8 +47,30 @@ const ScheduledMessages = (props: IScheduledMessagesProps) => {
     }
   };
 
-  const formatDateTime = (dateString: string) => {
-    return new Date(dateString).toLocaleString();
+  const formatDateTime = (scheduledTime: number | string) => {
+    let date: Date;
+    
+    if (typeof scheduledTime === 'number') {
+      // If it's a number, it could be Unix timestamp in seconds or milliseconds
+      if (scheduledTime > 1000000000000) {
+        // It's already in milliseconds
+        date = new Date(scheduledTime);
+      } else {
+        // It's in seconds, convert to milliseconds
+        date = new Date(scheduledTime * 1000);
+      }
+    } else {
+      // It's a string, try to parse it directly
+      date = new Date(scheduledTime);
+    }
+    
+    // Check if the date is valid
+    if (isNaN(date.getTime())) {
+      console.error('Invalid date:', scheduledTime, typeof scheduledTime);
+      return 'Invalid Date';
+    }
+    
+    return date.toLocaleString();
   };
 
   const getStatusVariant = (status: string) => {
@@ -98,7 +120,7 @@ const ScheduledMessages = (props: IScheduledMessagesProps) => {
       </CardHeader>
       <CardContent>
         {error && (
-          <div className="mb-4 p-3 text-sm bg-destructive/10 border border-destructive/20 text-destructive rounded">
+          <div className="error-message">
             {error}
           </div>
         )}
@@ -139,7 +161,7 @@ const ScheduledMessages = (props: IScheduledMessagesProps) => {
                     <div className="text-xs text-muted-foreground">
                       Scheduled for:{' '}
                       <span className="text-primary">
-                        {formatDateTime(message.scheduled_time.toString())}
+                        {formatDateTime(message.scheduled_time)}
                       </span>
                     </div>
                   </div>

@@ -115,13 +115,13 @@ const MessageComposer = (props: IMessageComposerProps) => {
       </CardHeader>
       <CardContent>
         {error && (
-          <div className="mb-4 p-3 text-sm bg-destructive/10 border border-destructive/20 text-destructive rounded">
+          <div className="error-message">
             {error}
           </div>
         )}
 
         {success && (
-          <div className="mb-4 p-3 text-sm bg-green-50 border border-green-200 text-green-800 rounded">
+          <div className="mb-4 p-3 text-sm bg-green-100 border border-green-300 text-green-800 rounded font-slack-body">
             {success}
           </div>
         )}
