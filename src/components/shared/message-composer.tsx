@@ -127,15 +127,21 @@ export const MessageComposer = (props: IMessageComposerProps) => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Channel Selection */}
-          <div className="space-y-2">
-            <Label
-              htmlFor="channel-select"
-              className="text-primary font-medium"
-            >
-              Channel
-            </Label>
+                 <form onSubmit={handleSubmit} className="space-y-4">
+           {/* Channel Selection */}
+           <div className="space-y-2">
+             <div className="space-y-2">
+               <Label
+                 htmlFor="channel-select"
+                 className="text-primary font-medium"
+               >
+                 Channel
+               </Label>
+               <div className="text-xs text-muted-foreground bg-blue-50 border border-blue-200 rounded-md p-2">
+                 <span className="font-medium text-blue-800">Note:</span> Private channels require manual invitation. 
+                 Write <code className="bg-blue-100 px-1 rounded text-blue-900">@Slack-Connect Hi</code> to invite the bot to your private channel.
+               </div>
+             </div>
             <Select value={selectedChannel} onValueChange={setSelectedChannel}>
               <SelectTrigger className="border-primary/30 focus:border-primary focus:ring-primary/20">
                 <SelectValue placeholder="Select a channel" />
