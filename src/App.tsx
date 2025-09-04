@@ -8,8 +8,9 @@ import { Button } from './components/ui/button';
 import { Card, CardContent } from './components/ui/card';
 import './App.css';
 import type { ISlackTeam } from './types';
+import { getStoredTeam, storeTeam, removeStoredTeam } from './lib';
 
-function App() {
+export function App() {
   const [connectedTeam, setConnectedTeam] = useState<ISlackTeam | null>(null);
   const [activeTab, setActiveTab] = useState<'compose' | 'scheduled'>(
     'compose',
@@ -17,25 +18,20 @@ function App() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
-    const storedTeam = localStorage.getItem('connected_slack_team');
+    const storedTeam = getStoredTeam();
     if (storedTeam) {
-      try {
-        setConnectedTeam(JSON.parse(storedTeam));
-      } catch (error) {
-        console.error('Error parsing stored team data:', error);
-        localStorage.removeItem('connected_slack_team');
-      }
+      setConnectedTeam(storedTeam);
     }
   }, []);
 
   const handleConnect = (team: ISlackTeam) => {
     setConnectedTeam(team);
-    localStorage.setItem('connected_slack_team', JSON.stringify(team));
+    storeTeam(team);
   };
 
   const handleDisconnect = () => {
     setConnectedTeam(null);
-    localStorage.removeItem('connected_slack_team');
+    removeStoredTeam();
   };
 
   const handleMessageSent = () => {
@@ -145,5 +141,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

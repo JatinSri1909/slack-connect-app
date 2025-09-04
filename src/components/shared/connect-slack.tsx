@@ -9,8 +9,9 @@ import {
 } from '../ui/card';
 import apiService from '@/services/api';
 import type { IConnectSlackProps } from '@/types';
+import { APP_CONSTANTS, MESSAGE_CONSTANTS } from '@/constants';
 
-const ConnectSlack = (props: IConnectSlackProps) => {
+export const ConnectSlack = (props: IConnectSlackProps) => {
   const { onConnect } = props;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +26,7 @@ const ConnectSlack = (props: IConnectSlackProps) => {
       const popup = window.open(
         authUrl,
         'slack-oauth',
-        'width=600,height=700,scrollbars=yes,resizable=yes',
+        APP_CONSTANTS.POPUP_DIMENSIONS.FEATURES,
       );
 
       const checkClosed = setInterval(() => {
@@ -34,7 +35,9 @@ const ConnectSlack = (props: IConnectSlackProps) => {
           window.removeEventListener('message', messageListener);
           setLoading(false);
 
-          const teamData = localStorage.getItem('connected_slack_team');
+          const teamData = localStorage.getItem(
+            APP_CONSTANTS.STORAGE_KEYS.CONNECTED_SLACK_TEAM,
+          );
           if (teamData) {
             try {
               const team = JSON.parse(teamData);
@@ -44,20 +47,24 @@ const ConnectSlack = (props: IConnectSlackProps) => {
             }
           }
         }
-      }, 1000);
+      }, APP_CONSTANTS.POPUP_CHECK_INTERVAL);
 
       const messageListener = (event: MessageEvent) => {
-        if (event.data.type === 'SLACK_OAUTH_SUCCESS') {
+        if (
+          event.data.type === APP_CONSTANTS.MESSAGE_TYPES.SLACK_OAUTH_SUCCESS
+        ) {
           popup?.close();
           clearInterval(checkClosed);
           window.removeEventListener('message', messageListener);
           setLoading(false);
           onConnect(event.data.team);
-        } else if (event.data.type === 'SLACK_OAUTH_ERROR') {
+        } else if (
+          event.data.type === APP_CONSTANTS.MESSAGE_TYPES.SLACK_OAUTH_ERROR
+        ) {
           popup?.close();
           clearInterval(checkClosed);
           window.removeEventListener('message', messageListener);
-          setError(event.data.error || 'Authentication failed');
+          setError(event.data.error || MESSAGE_CONSTANTS.ERROR.AUTH_FAILED);
           setLoading(false);
         }
       };
@@ -65,7 +72,7 @@ const ConnectSlack = (props: IConnectSlackProps) => {
       window.addEventListener('message', messageListener);
     } catch (error) {
       console.error('Auth error:', error);
-      setError('Failed to initialize authentication');
+      setError(MESSAGE_CONSTANTS.ERROR.INIT_AUTH_FAILED);
       setLoading(false);
     }
   };
@@ -79,7 +86,9 @@ const ConnectSlack = (props: IConnectSlackProps) => {
               SC
             </span>
           </div>
-          <CardTitle className="text-primary font-slack-headline">Connect to Slack</CardTitle>
+          <CardTitle className="text-primary font-slack-headline">
+            Connect to Slack
+          </CardTitle>
           <CardDescription className="font-slack-body">
             Connect your Slack workspace to start sending and scheduling
             messages
@@ -87,11 +96,7 @@ const ConnectSlack = (props: IConnectSlackProps) => {
         </CardHeader>
 
         <CardContent>
-          {error && (
-            <div className="error-message">
-              {error}
-            </div>
-          )}
+          {error && <div className="error-message">{error}</div>}
 
           <div className="space-y-3 mb-6 text-sm text-muted-foreground">
             <div className="flex items-center space-x-2">
@@ -113,12 +118,10 @@ const ConnectSlack = (props: IConnectSlackProps) => {
             disabled={loading}
             className="w-full shadow-lg shadow-primary/25 bg-primary font-slack-body"
           >
-            {loading ? 'Connecting...' : 'Connect with Slack'}
+            {loading ? MESSAGE_CONSTANTS.UI.CONNECTING : 'Connect with Slack'}
           </Button>
         </CardContent>
       </Card>
     </div>
   );
 };
-
-export default ConnectSlack;

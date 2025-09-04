@@ -14,8 +14,10 @@ import {
 import { Textarea } from '../ui/textarea';
 import apiService from '@/services/api';
 import type { IMessageComposerProps, ISlackChannel } from '@/types';
+import { MESSAGE_CONSTANTS, APP_CONSTANTS } from '@/constants';
+import { validateMessageForm } from '@/lib';
 
-const MessageComposer = (props: IMessageComposerProps) => {
+export const MessageComposer = (props: IMessageComposerProps) => {
   const { teamId, onMessageSent } = props;
   const [channels, setChannels] = useState<ISlackChannel[]>([]);
   const [selectedChannel, setSelectedChannel] = useState<string>('');
@@ -32,7 +34,7 @@ const MessageComposer = (props: IMessageComposerProps) => {
         const { channels } = await apiService.getChannels(teamId);
         setChannels(channels);
       } catch (error) {
-        setError('Failed to load channels');
+        setError(MESSAGE_CONSTANTS.ERROR.LOAD_CHANNELS_FAILED);
         console.error('Error loading channels:', error);
       }
     };
@@ -45,8 +47,9 @@ const MessageComposer = (props: IMessageComposerProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!selectedChannel || !message.trim()) {
-      setError('Please select a channel and enter a message');
+    const validationError = validateMessageForm(selectedChannel, message);
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
@@ -64,14 +67,14 @@ const MessageComposer = (props: IMessageComposerProps) => {
           message,
           scheduledTime: scheduledDate.toISOString(),
         });
-        setSuccess('Message scheduled successfully!');
+        setSuccess(MESSAGE_CONSTANTS.SUCCESS.MESSAGE_SCHEDULED);
       } else {
         await apiService.sendMessage({
           teamId,
           channelId: selectedChannel,
           message,
         });
-        setSuccess('Message sent successfully!');
+        setSuccess(MESSAGE_CONSTANTS.SUCCESS.MESSAGE_SENT);
       }
 
       // Reset form
@@ -82,11 +85,13 @@ const MessageComposer = (props: IMessageComposerProps) => {
       onMessageSent();
 
       // Clear success message after 3 seconds
-      setTimeout(() => setSuccess(null), 3000);
+      setTimeout(() => setSuccess(null), APP_CONSTANTS.SUCCESS_MESSAGE_TIMEOUT);
     } catch (error) {
       console.error('Error sending message:', error);
       setError(
-        error instanceof Error ? error.message : 'Failed to send message',
+        error instanceof Error
+          ? error.message
+          : MESSAGE_CONSTANTS.ERROR.SEND_MESSAGE_FAILED,
       );
     } finally {
       setLoading(false);
@@ -114,11 +119,7 @@ const MessageComposer = (props: IMessageComposerProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {error && (
-          <div className="error-message">
-            {error}
-          </div>
-        )}
+        {error && <div className="error-message">{error}</div>}
 
         {success && (
           <div className="mb-4 p-3 text-sm bg-green-100 border border-green-300 text-green-800 rounded font-slack-body">
@@ -205,8 +206,8 @@ const MessageComposer = (props: IMessageComposerProps) => {
           >
             {loading
               ? isScheduled
-                ? 'Scheduling...'
-                : 'Sending...'
+                ? MESSAGE_CONSTANTS.UI.SCHEDULING
+                : MESSAGE_CONSTANTS.UI.SENDING
               : isScheduled
                 ? 'Schedule Message'
                 : 'Send Message'}
@@ -216,5 +217,3 @@ const MessageComposer = (props: IMessageComposerProps) => {
     </Card>
   );
 };
-
-export default MessageComposer;

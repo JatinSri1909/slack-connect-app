@@ -4,8 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import apiService from '@/services/api';
 import type { IScheduledMessage, IScheduledMessagesProps } from '@/types';
+import { MESSAGE_CONSTANTS } from '@/constants';
+import { formatDateTime, getStatusVariant } from '@/lib';
 
-const ScheduledMessages = (props: IScheduledMessagesProps) => {
+export const ScheduledMessages = (props: IScheduledMessagesProps) => {
   const { teamId, refreshTrigger } = props;
   const [messages, setMessages] = useState<IScheduledMessage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,7 +23,7 @@ const ScheduledMessages = (props: IScheduledMessagesProps) => {
         setMessages(messages);
       } catch (error) {
         console.error('Error loading scheduled messages:', error);
-        setError('Failed to load scheduled messages');
+        setError(MESSAGE_CONSTANTS.ERROR.LOAD_SCHEDULED_MESSAGES_FAILED);
       } finally {
         setLoading(false);
       }
@@ -41,48 +43,9 @@ const ScheduledMessages = (props: IScheduledMessagesProps) => {
       setMessages((prev) => prev.filter((msg) => msg.id !== messageId));
     } catch (error) {
       console.error('Error cancelling message:', error);
-      setError('Failed to cancel message');
+      setError(MESSAGE_CONSTANTS.ERROR.CANCEL_MESSAGE_FAILED);
     } finally {
       setCancellingId(null);
-    }
-  };
-
-  const formatDateTime = (scheduledTime: number | string) => {
-    let date: Date;
-    
-    if (typeof scheduledTime === 'number') {
-      // If it's a number, it could be Unix timestamp in seconds or milliseconds
-      if (scheduledTime > 1000000000000) {
-        // It's already in milliseconds
-        date = new Date(scheduledTime);
-      } else {
-        // It's in seconds, convert to milliseconds
-        date = new Date(scheduledTime * 1000);
-      }
-    } else {
-      // It's a string, try to parse it directly
-      date = new Date(scheduledTime);
-    }
-    
-    // Check if the date is valid
-    if (isNaN(date.getTime())) {
-      console.error('Invalid date:', scheduledTime, typeof scheduledTime);
-      return 'Invalid Date';
-    }
-    
-    return date.toLocaleString();
-  };
-
-  const getStatusVariant = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return 'secondary';
-      case 'sent':
-        return 'default';
-      case 'failed':
-        return 'destructive';
-      default:
-        return 'secondary';
     }
   };
 
@@ -91,7 +54,7 @@ const ScheduledMessages = (props: IScheduledMessagesProps) => {
       <Card>
         <CardContent className="p-6">
           <div className="text-center text-muted-foreground">
-            Loading scheduled messages...
+            {MESSAGE_CONSTANTS.UI.LOADING_SCHEDULED_MESSAGES}
           </div>
         </CardContent>
       </Card>
@@ -119,15 +82,11 @@ const ScheduledMessages = (props: IScheduledMessagesProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {error && (
-          <div className="error-message">
-            {error}
-          </div>
-        )}
+        {error && <div className="error-message">{error}</div>}
 
         {messages.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
-            No scheduled messages found
+            {MESSAGE_CONSTANTS.UI.NO_SCHEDULED_MESSAGES}
           </div>
         ) : (
           <div className="space-y-4">
@@ -174,7 +133,9 @@ const ScheduledMessages = (props: IScheduledMessagesProps) => {
                       disabled={cancellingId === message.id}
                       className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
                     >
-                      {cancellingId === message.id ? 'Cancelling...' : 'Cancel'}
+                      {cancellingId === message.id
+                        ? MESSAGE_CONSTANTS.UI.CANCELLING
+                        : 'Cancel'}
                     </Button>
                   )}
                 </div>
@@ -186,5 +147,3 @@ const ScheduledMessages = (props: IScheduledMessagesProps) => {
     </Card>
   );
 };
-
-export default ScheduledMessages;
