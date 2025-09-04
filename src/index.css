@@ -1,39 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Larsseit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Circular:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
   --radius: 0.65rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.141 0.005 285.823);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.141 0.005 285.823);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.141 0.005 285.823);
-  --primary: oklch(0.606 0.25 292.717);
-  --primary-foreground: oklch(0.969 0.016 293.756);
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.21 0.006 285.885);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.969 0.016 293.756);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.606 0.25 292.717);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-primary: oklch(0.606 0.25 292.717);
-  --sidebar-primary-foreground: oklch(0.969 0.016 293.756);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.606 0.25 292.717);
+  --background: #f8f8f8; /* Very slightly dark white for eye comfort */
+  --foreground: #1d1c1d;
+  --card: #ffffff;
+  --card-foreground: #1d1c1d;
+  --popover: #ffffff;
+  --popover-foreground: #1d1c1d;
+  --primary: #4A154B; /* Slack's purple */
+  --primary-foreground: #ffffff; /* White text on purple buttons */
+  --secondary: #f8f8f8;
+  --secondary-foreground: #1d1c1d;
+  --muted: #f8f8f8;
+  --muted-foreground: #616061;
+  --accent: #f8f8f8;
+  --accent-foreground: #1d1c1d;
+  --destructive: #e01e5a;
+  --destructive-foreground: #ffffff;
+  --border: #e8e8e8;
+  --input: #e8e8e8;
+  --ring: #4A154B;
+  --chart-1: #4A154B;
+  --chart-2: #36c5f0;
+  --chart-3: #2eb67d;
+  --chart-4: #ecb22e;
+  --chart-5: #e01e5a;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1d1c1d;
+  --sidebar-primary: #4A154B;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f8f8f8;
+  --sidebar-accent-foreground: #1d1c1d;
+  --sidebar-border: #e8e8e8;
+  --sidebar-ring: #4A154B;
 }
 
 .dark {
@@ -71,45 +74,72 @@
   --sidebar-ring: oklch(0.541 0.281 293.009);
 }
 
-/* Force visible violet colors */
+/* Slack Font Families */
+.font-slack-logo {
+  font-family: 'Helix Bold', 'Larsseit', 'Circular', sans-serif;
+  font-weight: 700;
+}
+
+.font-slack-headline {
+  font-family: 'Larsseit', 'Circular', sans-serif;
+  font-weight: 600;
+}
+
+.font-slack-body {
+  font-family: 'Noto Sans', sans-serif;
+}
+
+/* Slack Purple Color Overrides */
 .text-primary {
-  color: #8b5cf6 !important;
+  color: #4A154B !important;
 }
 
 .bg-primary {
-  background-color: #8b5cf6 !important;
+  background-color: #4A154B !important;
 }
 
 .border-primary\/20 {
-  border-color: rgba(139, 92, 246, 0.2) !important;
+  border-color: rgba(74, 21, 75, 0.2) !important;
 }
 
 .border-primary\/30 {
-  border-color: rgba(139, 92, 246, 0.3) !important;
+  border-color: rgba(74, 21, 75, 0.3) !important;
 }
 
 .shadow-primary\/25 {
-  box-shadow: 0 4px 6px -1px rgba(139, 92, 246, 0.25), 0 2px 4px -1px rgba(139, 92, 246, 0.1) !important;
+  box-shadow: 0 4px 6px -1px rgba(74, 21, 75, 0.25), 0 2px 4px -1px rgba(74, 21, 75, 0.1) !important;
 }
 
 .shadow-primary\/5 {
-  box-shadow: 0 1px 3px 0 rgba(139, 92, 246, 0.05), 0 1px 2px 0 rgba(139, 92, 246, 0.05) !important;
+  box-shadow: 0 1px 3px 0 rgba(74, 21, 75, 0.05), 0 1px 2px 0 rgba(74, 21, 75, 0.05) !important;
 }
 
 .bg-primary\/5 {
-  background-color: rgba(139, 92, 246, 0.05) !important;
+  background-color: rgba(74, 21, 75, 0.05) !important;
 }
 
 .bg-primary\/10 {
-  background-color: rgba(139, 92, 246, 0.1) !important;
+  background-color: rgba(74, 21, 75, 0.1) !important;
 }
 
 .hover\:bg-primary\/10:hover {
-  background-color: rgba(139, 92, 246, 0.1) !important;
+  background-color: rgba(74, 21, 75, 0.1) !important;
 }
 
 .hover\:text-primary:hover {
-  color: #8b5cf6 !important;
+  color: #4A154B !important;
+}
+
+/* Ensure all text inside purple elements is white */
+.bg-primary,
+.bg-primary * {
+  color: #ffffff !important;
+}
+
+/* Specific overrides for elements that should have white text on purple background */
+.bg-primary .text-primary-foreground,
+.bg-primary .text-primary-foreground * {
+  color: #ffffff !important;
 }
 
 .dark {

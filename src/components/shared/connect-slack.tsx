@@ -71,20 +71,16 @@ const ConnectSlack = (props: IConnectSlackProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-6">
+    <div className="min-h-screen bg-background flex items-center justify-center p-6 font-slack-body">
       <Card className="w-full max-w-md border-primary/20 shadow-lg shadow-primary/5">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 w-12 h-12 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/25">
-            <svg
-              className="w-5 h-5 text-primary-foreground"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
+            <span className="text-primary-foreground font-slack-logo text-lg font-bold">
+              SC
+            </span>
           </div>
-          <CardTitle className="text-primary">Connect to Slack</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-primary font-slack-headline">Connect to Slack</CardTitle>
+          <CardDescription className="font-slack-body">
             Connect your Slack workspace to start sending and scheduling
             messages
           </CardDescription>
@@ -115,7 +111,7 @@ const ConnectSlack = (props: IConnectSlackProps) => {
           <Button
             onClick={handleConnect}
             disabled={loading}
-            className="w-full shadow-lg shadow-primary/25 bg-primary"
+            className="w-full shadow-lg shadow-primary/25 bg-primary font-slack-body"
           >
             {loading ? 'Connecting...' : 'Connect with Slack'}
           </Button>

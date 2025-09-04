@@ -96,7 +96,7 @@ const MessageComposer = (props: IMessageComposerProps) => {
   return (
     <Card className="border-primary/20 shadow-lg shadow-primary/5">
       <CardHeader>
-        <CardTitle className="text-primary flex items-center space-x-2">
+        <CardTitle className="text-primary flex items-center space-x-2 font-slack-headline">
           <svg
             className="w-5 h-5"
             fill="none"

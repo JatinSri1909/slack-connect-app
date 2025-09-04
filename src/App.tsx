@@ -7,14 +7,10 @@ import {
 import { Button } from './components/ui/button';
 import { Card, CardContent } from './components/ui/card';
 import './App.css';
-
-interface SlackTeam {
-  id: string;
-  name: string;
-}
+import type { ISlackTeam } from './types';
 
 function App() {
-  const [connectedTeam, setConnectedTeam] = useState<SlackTeam | null>(null);
+  const [connectedTeam, setConnectedTeam] = useState<ISlackTeam | null>(null);
   const [activeTab, setActiveTab] = useState<'compose' | 'scheduled'>(
     'compose',
   );
@@ -32,7 +28,7 @@ function App() {
     }
   }, []);
 
-  const handleConnect = (team: SlackTeam) => {
+  const handleConnect = (team: ISlackTeam) => {
     setConnectedTeam(team);
     localStorage.setItem('connected_slack_team', JSON.stringify(team));
   };
@@ -51,26 +47,22 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background font-slack-body">
       {/* Header */}
       <header className="border-b bg-card border-primary/20">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/25">
-                <svg
-                  className="w-5 h-5 text-primary-foreground"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
+                <span className="text-primary-foreground font-slack-logo text-sm font-bold">
+                  SC
+                </span>
               </div>
               <div>
-                <h1 className="text-lg font-semibold text-primary">
-                  Slack Connect
+                <h1 className="text-lg font-semibold text-primary font-slack-logo">
+                  SLACK CONNECT
                 </h1>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground font-slack-body">
                   Connected to {connectedTeam.name}
                 </p>
               </div>
@@ -78,7 +70,7 @@ function App() {
             <Button
               variant="outline"
               onClick={handleDisconnect}
-              className="border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground"
+              className="border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground font-slack-body"
             >
               Disconnect
             </Button>
@@ -95,7 +87,7 @@ function App() {
               <Button
                 variant={activeTab === 'compose' ? 'default' : 'ghost'}
                 onClick={() => setActiveTab('compose')}
-                className={`flex-1 ${activeTab === 'compose' ? 'shadow-lg shadow-primary/25' : 'hover:bg-primary/10 hover:text-primary'}`}
+                className={`flex-1 font-slack-body ${activeTab === 'compose' ? 'shadow-lg shadow-primary/25' : 'hover:bg-primary/10 hover:text-primary'}`}
               >
                 <svg
                   className="w-4 h-4 mr-2"
@@ -115,7 +107,7 @@ function App() {
               <Button
                 variant={activeTab === 'scheduled' ? 'default' : 'ghost'}
                 onClick={() => setActiveTab('scheduled')}
-                className={`flex-1 ${activeTab === 'scheduled' ? 'shadow-lg shadow-primary/25' : 'hover:bg-primary/10 hover:text-primary'}`}
+                className={`flex-1 font-slack-body ${activeTab === 'scheduled' ? 'shadow-lg shadow-primary/25' : 'hover:bg-primary/10 hover:text-primary'}`}
               >
                 <svg
                   className="w-4 h-4 mr-2"
