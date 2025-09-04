@@ -1,13 +1,11 @@
 import { useState } from 'react';
-import { Button } from './ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import apiService from '../services/api';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import apiService from '@/services/api';
+import type { IConnectSlackProps } from '@/types';
 
-interface ConnectSlackProps {
-  onConnect: (team: { id: string; name: string }) => void;
-}
-
-const ConnectSlack = ({ onConnect }: ConnectSlackProps) => {
+const ConnectSlack = (props: IConnectSlackProps) => {
+  const { onConnect} = props;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

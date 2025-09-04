@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import ConnectSlack from './components/connect-slack';
-import MessageComposer from './components/message-composer';
-import ScheduledMessages from './components/scheduled-message';
+import { ConnectSlack, MessageComposer, ScheduledMessages } from './components/shared';
 import { Button } from './components/ui/button';
 import { Card, CardContent } from './components/ui/card';
 import './App.css';

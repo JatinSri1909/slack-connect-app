@@ -1,16 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Badge } from './ui/badge';
-import apiService, { type ScheduledMessage } from '../services/api';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Badge } from '../ui/badge';
+import apiService from '@/services/api';
+import type { IScheduledMessage, IScheduledMessagesProps } from '@/types';
 
-interface ScheduledMessagesProps {
-  teamId: string;
-  refreshTrigger: number;
-}
-
-const ScheduledMessages = ({ teamId, refreshTrigger }: ScheduledMessagesProps) => {
-  const [messages, setMessages] = useState<ScheduledMessage[]>([]);
+const ScheduledMessages = (props : IScheduledMessagesProps) => {
+  const { teamId, refreshTrigger } = props;
+  const [messages, setMessages] = useState<IScheduledMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cancellingId, setCancellingId] = useState<number | null>(null);

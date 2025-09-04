@@ -1,20 +1,17 @@
 import { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Label } from './ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Textarea } from './ui/textarea';
-import apiService, { type SlackChannel } from '../services/api';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Label } from '../ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Textarea } from '../ui/textarea';
+import apiService from '@/services/api';
+import type { IMessageComposerProps, ISlackChannel } from '@/types';
 
-interface MessageComposerProps {
-  teamId: string;
-  onMessageSent: () => void;
-}
-
-const MessageComposer = ({ teamId, onMessageSent }: MessageComposerProps) => {
-  const [channels, setChannels] = useState<SlackChannel[]>([]);
+const MessageComposer = (props: IMessageComposerProps) => {
+  const { teamId, onMessageSent } = props;
+  const [channels, setChannels] = useState<ISlackChannel[]>([]);
   const [selectedChannel, setSelectedChannel] = useState<string>('');
   const [message, setMessage] = useState('');
   const [isScheduled, setIsScheduled] = useState(false);
