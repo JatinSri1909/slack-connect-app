@@ -12,6 +12,11 @@ export const MESSAGE_CONSTANTS = {
     CANCEL_MESSAGE_FAILED: 'Failed to cancel message',
     PARSE_TEAM_DATA: 'Error parsing team data',
     INVALID_DATE: 'Invalid Date',
+    REAUTH_REQUIRED: 'Re-authentication required - please reconnect your Slack workspace',
+    INVALID_REFRESH_TOKEN: 'Invalid refresh token - re-authentication required',
+    TOKEN_REFRESH_FAILED: 'Token refresh failed - re-authentication required',
+    NETWORK_ERROR: 'Network error - please check your connection and try again',
+    RATE_LIMITED: 'Rate limited - please wait a moment and try again',
   },
   VALIDATION: {
     SELECT_CHANNEL_AND_MESSAGE: 'Please select a channel and enter a message',
